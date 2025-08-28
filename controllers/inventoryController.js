@@ -28,7 +28,7 @@ export const editInventory = async (req, res) => {
   res.json({ message: "Product modified successfully!" });
 };
 
-export const deleteSales = async (req, res) => {
+export const deleteInventory = async (req, res) => {
   const id = req.params.id;
   const sql = `DELETE FROM inventory
                 WHERE product_id = ${id}`;
