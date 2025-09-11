@@ -1,9 +1,26 @@
-import express from 'express'
+import express from "express";
 
-const app = express()
+import { customerRouter } from "../mysql-lab-shantel/routes/customerRoutes.js";
+import { salesRouter } from "../mysql-lab-shantel/routes/salesRoutes.js";
+import { inventoryRouter } from "../mysql-lab-shantel/routes/inventoryRoutes.js";
+import { sales_InventoryRouter } from "../mysql-lab-shantel/routes/salesInventoryRoutes.js";
+import { logger } from '../mysql-lab-shantel/middlewares/logger.js'
+import { verifyToken } from '../mysql-lab-shantel/middlewares/verifyToken.js';
+import { authRouter } from "./routes/authRouter.js";
 
-app.get ('/', (req, res)=> {
-    res.send ('Hello World')
-})
 
-app.listen(3000)
+const app = express();
+app.use(express.json());
+
+app.use(logger);
+
+app.use(authRouter)
+
+
+app.use(verifyToken)
+app.use(customerRouter);
+app.use(salesRouter);
+app.use(inventoryRouter);
+app.use(sales_InventoryRouter);
+
+app.listen(3000);
