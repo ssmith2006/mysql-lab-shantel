@@ -1,10 +1,10 @@
-import pool from "../db/cn.js"
+import { pool } from "../db/cn.js"
 
 export const getSales = async (req, res) => {
 const sql = `SELECT * FROM sales`;
 const sales = await pool.query(sql);
 
-res.json(sales)
+res.json(sales);
 
 }
 
@@ -36,4 +36,4 @@ const sql = `DELETE FROM sales
 const results = await pool.query(sql);
 
 res.json({message: "Sale sucessfully deleted"})
-}
+};
