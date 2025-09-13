@@ -4,14 +4,14 @@ import { pool } from "../db/cn.js";
 import bcrypt from "bcrypt";
 
 const USER = "admin";
-const PASSWORD = password123;
+
 
 export const basicAuth = async (req, res, next) => {
   if (!req.headers.authorization) {
     console.log("Authorization headers do not exist.");
     res.status(401).send("Please provide username and password");
   }
-  const credentials = req.headers.authorization.split("")[1];
+  const credentials = req.headers.authorization.split(" ")[1];
   const decode = Buffer.from(credentials, `base64`).toString(`utf-8`);
   const [username, password] = decode.split(":");
 
@@ -30,7 +30,7 @@ export const basicAuth = async (req, res, next) => {
 
   const [rows] =
     await pool.query(`SELECT user_id, username, password FROM users 
-    WHERE username = ${username}`);
+    WHERE username = "${username}"`);
   const user = rows[0]; //Extract the first item in your array
   const password_hash = user.password;
 
