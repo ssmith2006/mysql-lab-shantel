@@ -13,10 +13,10 @@ import {
 
 export const inventoryRouter = express.Router();
 
-inventoryRouter.get("/customer", getInventory);
-inventoryRouter.post("/customer", createInventory);
-inventoryRouter.put("/customer", editInventory);
-inventoryRouter.delete("/customer", deleteInventory)
+inventoryRouter.get("/inventory", getInventory);
+inventoryRouter.post("/inventory", createInventory);
+inventoryRouter.put("/inventory", editInventory);
+inventoryRouter.delete("/inventory", deleteInventory)
 inventoryRouter.get('/inventory/value', getInventoryValue);
 inventoryRouter.get('/inventory/:id/history', getProductSalesHistory)//remember to import
 inventoryRouter.get('/inventory/top/units', getTop5ByUnit)
