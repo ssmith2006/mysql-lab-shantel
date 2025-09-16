@@ -6,8 +6,8 @@ import path from 'path'
 export const getUsers = async(req, res)=>{
     const sql = `select * from users`
     const [result] = await pool.query(sql)
-    return res.status(200).json ({message: "User info retrieved successfully."})
-    data: result;
+    return res.status(200).json ({message: "User info retrieved successfully, data: result;"})
+   
 }
 
 export const getUserInformation = async(req, res) =>{
@@ -18,36 +18,46 @@ export const getUserInformation = async(req, res) =>{
     res.status(200).json(result)
 }
 
-export const uploadProfilePicture = async(req, res)=>{
-    const id = req.params.id
-    const file = req.file
+export const uploadProfilePicture = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const file = req.file;
 
-    if (!file){
-        res.statu(400).json({error: "Please send an image file."})
+    if (!file) {
+      return res.status(400).json({ error: "Please send an image file." });
     }
 
-    const fileType =file.mimetype.StartsWith('image/')
-    if(!fileType){
-        res.status(400).json({error: "Only image file types are allowed."})
+    if (!file.mimetype.startsWith("image/")) {
+      return res
+        .status(400)
+        .json({ error: "Only image file types are allowed." });
     }
 
-    const bucket = process.env.S3_BUCKET_NAME
-    const region =process.env.AWS_REGION
+    const bucket = process.env.S3_BUCKET_NAME;
+    console.log("AWS_BUCKET:", process.env.S3_BUCKET_NAME);
+    const region = process.env.AWS_REGION;
+    console.log("AWS_REGION:", process.env.AWS_REGION);
 
-    const ext = path.extname(file.originalName)
-    const key = `profile-picture/${id}-${Date.now()} ${text}`
+    const ext = path.extname(file.originalname);
+    const key = `profile-picture/${id}-${Date.now()}${ext}`;
 
-    await s3.send(new PutObjectCommand ({
+    await s3.send(
+      new PutObjectCommand({
         Bucket: bucket,
         Key: key,
         Body: file.buffer,
-        contentType: file.mimetype
-    }))
+        ContentType: file.mimetype,
+      })
+    );
 
-    const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`
-    const sql = `update users
-                  SET profile_picture_url = "${url}"
-                  WHERE user_id = ${id}`
-    await pool.query(sql)
-    res.json({message: "Profile Picture Uploaded!"})
-}
+    const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+
+    const sql = `UPDATE users SET profile_picture_url = ? WHERE user_id = ?`;
+    await pool.query(sql, [url, id]);
+
+    return res.json({ message: "Profile Picture Uploaded!", url });
+  } catch (err) {
+    console.error("Error uploading profile picture:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
