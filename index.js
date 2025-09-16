@@ -10,6 +10,7 @@ import { authRouter } from "./routes/authRouter.js";
 import { userRouter} from "../mysql-lab-shantel/routes/userRouter.js"
 
 const app = express();
+
 app.use(express.json());
 
 app.use(logger);
