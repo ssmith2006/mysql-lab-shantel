@@ -12,7 +12,7 @@ export const getUsers = async(req, res)=>{
 
 export const getUserInformation = async(req, res) =>{
     const id =req.params.id
-    const sql = `select * form users WHERE user_id = ${id}`
+    const sql = `select * from  users WHERE user_id = ${id}`
 
     const [result] = await pool.query(sql)
     res.status(200).json(result)
@@ -39,7 +39,15 @@ export const uploadProfilePicture = async (req, res) => {
     console.log("AWS_REGION:", process.env.AWS_REGION);
 
     const ext = path.extname(file.originalname);
-    const key = `profile-picture/${id}-${Date.now()}${ext}`;
+    const key =`profile-picture/${id}-${Date.now()}${ext}`;
+
+    console.log({
+      bucket,
+      region,
+      key,
+      mimetype: file.mimetype,
+      bufferLength: file.buffer.length,
+    });
 
     await s3.send(
       new PutObjectCommand({
@@ -50,7 +58,7 @@ export const uploadProfilePicture = async (req, res) => {
       })
     );
 
-    const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+    const url = `https://${bucket}.s3.${region}.amazonaws.com/${encodeURIComponent(key)}`;
 
     const sql = `UPDATE users SET profile_picture_url = ? WHERE user_id = ?`;
     await pool.query(sql, [url, id]);
