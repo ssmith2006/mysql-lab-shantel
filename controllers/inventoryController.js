@@ -8,10 +8,10 @@ export const getInventory = async (req, res) => {
 };
 
 export const createInventory = async (req, res) => {
-  const id = req.params.id;
-  const { name, price, stock } = req.body;
-  const sql = `INSERT INTO inventory (id, name, stock, price) 
-               VALUES ( ${id}, "${name}", ${price}, ${stock})`;
+  
+  const { name, price, stock } = req.body
+  const sql = `INSERT INTO inventory (name, stock, price) 
+               VALUES ("${name}", ${price}, ${stock})`;
   const result = await pool.query(sql);
   res.json({ message: "Product created successfully!" });
 };
