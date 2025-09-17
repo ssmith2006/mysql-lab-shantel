@@ -1,4 +1,5 @@
 import express from "express";
+import 'dotenv/config'
 
 import { customerRouter } from "../mysql-lab-shantel/routes/customerRoutes.js";
 import { salesRouter } from "../mysql-lab-shantel/routes/salesRoutes.js";
