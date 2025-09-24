@@ -32,6 +32,10 @@ export const basicAuth = async (req, res, next) => {
     await pool.query(`SELECT user_id, username, password FROM users 
     WHERE username = "${username}"`);
   const user = rows[0]; //Extract the first item in your array
+
+  if(!user){
+    return res.status(404).json({error: "User does not exist"});
+  }
   const password_hash = user.password;
 
   //2. verify using BCrypt
