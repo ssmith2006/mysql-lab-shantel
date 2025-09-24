@@ -8,9 +8,14 @@ import { sales_InventoryRouter } from "../mysql-lab-shantel/routes/salesInventor
 import { logger } from '../mysql-lab-shantel/middlewares/logger.js'
 import { verifyToken } from '../mysql-lab-shantel/middlewares/verifyToken.js';
 import { authRouter } from "./routes/authRouter.js";
-import { userRouter} from "../mysql-lab-shantel/routes/userRouter.js"
+import { userRouter} from "../mysql-lab-shantel/routes/userRouter.js";
+import cors from "cors"
 
 const app = express();
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}))
 
 app.use(express.json());
 
