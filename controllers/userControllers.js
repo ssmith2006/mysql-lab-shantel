@@ -66,7 +66,8 @@ export const getUsers = async (req, res) => {
   const [result] = await pool.query(sql);
   return res
     .status(200)
-    .json({ message: "User info retrieved successfully, data: result;" });
+    .json({ message: "User info retrieved successfully", 
+      data: result });
 };
 
 export const getUserInformation = async (req, res) => {
