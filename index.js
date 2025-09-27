@@ -12,18 +12,7 @@ import { userRouter } from "../mysql-lab-shantel/routes/userRouter.js";
 import cors from "cors";
 
 const app = express();
-app.use((req, res, next) => {
-  console.log("🔍 Origin:", req.headers.origin);
-  console.log("🔍 Method:", req.method);
-  next();
-});
-app.use(
-  cors({
-    origin: [/.githubpreview.dev$/],
-    credentials: true,
-  })
-);
-app.options("*", cors());
+app.use(cors());
 
 app.use(express.json());
 
