@@ -1,5 +1,4 @@
-
-import {pool} from "../db/cn.js";
+import { pool } from "../db/cn.js";
 import { s3 } from "/workspaces/mysql-lab-shantel/utils/s3client.js";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import path from "path";
@@ -11,10 +10,9 @@ export const getInventory = async (req, res) => {
 };
 
 export const createInventory = async (req, res) => {
-  
-  const { name, price, stock } = req.body
-  const sql = `INSERT INTO inventory (name, stock, price) 
-               VALUES ("${name}", ${price}, ${stock})`;
+  const { name, price, stock, inventory_picture_url } = req.body;
+  const sql = `INSERT INTO inventory (name, price, stock, inventory_picture_url) 
+               VALUES ("${name}", ${price}, ${stock}, ${inventory_picture_url})`;
   const result = await pool.query(sql);
   res.json({ message: "Product created successfully!" });
 };
@@ -40,54 +38,55 @@ export const deleteInventory = async (req, res) => {
   res.json({ message: "Product successfully deleted!" });
 };
 
-export const getInventoryValue = async (req, res)=>{
-  const sql= `SELECT  
+export const getInventoryValue = async (req, res) => {
+  const sql = `SELECT  
               product_id, 
               name. price, 
               stock, 
               (price * stock) AS inventory_value
               FROM inventory
-              ORDER BY inventory_value DESC`
-  const result = await pool.query(sql)
-  res.json(result)
-}
+              ORDER BY inventory_value DESC`;
+  const result = await pool.query(sql);
+  res.json(result);
+};
 
 export const getProductSalesHistory = async (req, res) => {
-    const id = req.params.id
-    const sql = `SELECT s.sales_id, s.date, s.customer_id, c.name, si.quantity, i.product_id, i.name AS product_name, i.price, si.quantity, (i.price * si.quantity) AS total 
+  const id = req.params.id;
+  const sql = `SELECT s.sales_id, s.date, s.customer_id, c.name, si.quantity, i.product_id, i.name AS product_name, i.price, si.quantity, (i.price * si.quantity) AS total 
     FROM sales_inventory si
     JOIN sales s ON s.sales_id = si.sales_id
     JOIN inventory i ON i.product+id =si.product_id
     JOIN customer con s.customeer_id = c.customer_id
     WHERE i.product_id = ${id}
-    ORDER BY s.date DESC`
+    ORDER BY s.date DESC`;
 
-const result =await pool.query(sql)
-res.json(result)
-}
+  const result = await pool.query(sql);
+  res.json(result);
+};
 
 export const getTop5ByUnit = async (req, res) => {
-  const sql = `SELECT i.product_id, i.name, SUM(si.quanity)
+  const sql = `SELECT i.product_id, i.name, SUM(si.quantity) AS total
   FROM inventory i
-  JOIN si ON si.product_id = i.product_id
-  GROUP BY i.product_id
-  ORDER BY si.quantity DESC
-  LIMIT 5`
+  LEFT JOIN sales_inventory si ON si.product_id = i.product_id
+  GROUP BY i.product_id, i.name
+  ORDER BY total DESC
+  LIMIT 5`;
 
-  const result =await pool.query(sql)
-  res.json(result)
-}
+  const [result] = await pool.query(sql);
+  console.log("Top 5 products result", result)
+  res.json(result);
+};
 
 export const getLowStockProducts = async (req, res) => {
-  const threshold = req.params.threshold
+  const threshold = req.params.threshold;
   const sql = `SELECT product_id, name, stock
   FROM inventory
   WHERE stock < ${threshold}
-  ORDER BY stock ASC`
+  ORDER BY stock ASC`;
 
-  const result = await pool.query(sql)
-  res.json(result)
-}
+  const result = await pool.query(sql);
+  res.json(result);
+};
 
 export const uploadInventoryImage = async (req, res) => {
   try {
@@ -95,7 +94,11 @@ export const uploadInventoryImage = async (req, res) => {
     const file = req.file;
 
     if (!file) {
-      return res.status(400).json({ error: 'Please send an image file in form-data with key "image".' });
+      return res
+        .status(400)
+        .json({
+          error: 'Please send an image file in form-data with key "image".',
+        });
     }
 
     if (!file.mimetype.startsWith("image/")) {
@@ -105,7 +108,7 @@ export const uploadInventoryImage = async (req, res) => {
     const bucket = process.env.S3_BUCKET_NAME;
     const region = process.env.AWS_REGION;
 
-    const ext = path.extname(file.originalname) ||"";
+    const ext = path.extname(file.originalname) || "";
     const key = `inventory-picture/${id}-${Date.now()}${ext}`;
 
     await s3.send(
