@@ -1,5 +1,5 @@
 //Basic Auth
-import jwt from "jsonwebtoken";
+
 import { pool } from "../db/cn.js";
 import bcrypt from "bcrypt";
 
