@@ -32,7 +32,7 @@ inventoryRouter.get("/inventory/:id/history", getProductSalesHistory); //remembe
 inventoryRouter.get("/inventory/top/units", getTop5ByUnit);
 inventoryRouter.get("/inventory/low-stock/:threshold", getLowStockProducts);
 inventoryRouter.post(
-  "/inventory/:id/upload-image",
+  "/inventory/:id/upload-picture",
   verifyToken,
   upload.single("image"),
   uploadInventoryImage
