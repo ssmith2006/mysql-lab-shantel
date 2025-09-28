@@ -5,7 +5,8 @@ import {
  createSales,
  editSales,
  deleteSales
-} from "/../workspaces/mysql-lab-shantel/controllers/salesController.js"
+} from "/../workspaces/mysql-lab-shantel/controllers/salesController.js";
+import { addSalesItems } from "/../workspaces/mysql-lab-shantel/controllers/salesInventoryController.js"
 
 export const salesRouter = express.Router();
 
