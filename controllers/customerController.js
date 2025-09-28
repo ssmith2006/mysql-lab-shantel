@@ -72,3 +72,46 @@ export const getTop5ByRevenue = async (req, res) => {
 
 };
 
+export const uploadCustomerImage = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const file = req.file;
+
+    if (!file) {
+      return res
+        .status(400)
+        .json({
+          error: 'Please send an image file in form-data with key "image".',
+        });
+    }
+
+    if (!file.mimetype.startsWith("image/")) {
+      return res.status(400).json({ error: "Only image files are allowed." });
+    }
+
+    const bucket = process.env.S3_BUCKET_NAME;
+    const region = process.env.AWS_REGION;
+
+    const ext = path.extname(file.originalname) || "";
+    const key = `inventory-picture/${id}-${Date.now()}${ext}`;
+
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      })
+    );
+
+    const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
+
+    const sql = `UPDATE inventory SET profile_picture_url = '${url}' WHERE product_id = ${id}`;
+    await pool.query(sql);
+
+    return res.json({ message: "Customer image uploaded!", url });
+  } catch (err) {
+    console.error("Error uploading inventory image:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
