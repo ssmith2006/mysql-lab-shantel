@@ -21,8 +21,8 @@ const upload = multer({
 
 customerRouter.get("/customer", getCustomer);
 customerRouter.post("/customer", createCustomer);
-customerRouter.put("/customer", editCustomer);
-customerRouter.delete("/customer", deleteCustomer);
+customerRouter.put("/customer/:id", editCustomer);
+customerRouter.delete("/customer/:id", deleteCustomer);
 
 //Total spent by customer
 customerRouter.get('/customer/:id/total-spent', getCustomerTotalSpent) //import at the top
