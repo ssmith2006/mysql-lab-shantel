@@ -11,5 +11,6 @@ export const salesRouter = express.Router();
 
 salesRouter.get("/sales", getSales);
 salesRouter.post("/sales", createSales);
+salesRouter.post("/sales/:sale_id/items", addSalesItems);
 salesRouter.put("/sales/:id", editSales);
 salesRouter.delete("/sales/:id", deleteSales);
