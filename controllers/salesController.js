@@ -7,6 +7,18 @@ const sales = await pool.query(sql);
 res.json(sales);
 
 }
+export const getCustomerSales= async (req, res) =>{
+	const id =req.params.id
+	const sql = `SELECT s.sale_id, s.date, s.customer_id,
+	c.name AS name,
+	c.email AS email,
+	c.phone AS phone
+	FROM sales s
+	JOIN customer c ON s.customer_id = c.customer_id
+	WHERE customer_id = ${id}`;
+const results = await pool.query(sql)
+res.json(results)
+}
 
 export const createSales = async (req, res) => {
 const {customer_id, date} = req.body;
