@@ -30,7 +30,7 @@ customerRouter.get('/customer/search/:name', searchCustomersByName),//import at 
 
 customerRouter.get('/customer/top/revenue', getTop5ByRevenue),
 customerRouter.post(
-  "/inventory/:id/upload-image",
+  "/customer/:id/upload-image",
   verifyToken,
   upload.single("image"),
   uploadCustomerImage
