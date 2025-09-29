@@ -93,7 +93,7 @@ export const uploadCustomerImage = async (req, res) => {
     const region = process.env.AWS_REGION;
 
     const ext = path.extname(file.originalname) || "";
-    const key = `inventory-picture/${id}-${Date.now()}${ext}`;
+    const key = `customer-picture/${id}-${Date.now()}${ext}`;
 
     await s3.send(
       new PutObjectCommand({
@@ -106,12 +106,12 @@ export const uploadCustomerImage = async (req, res) => {
 
     const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
 
-    const sql = `UPDATE inventory SET profile_picture_url = '${url}' WHERE product_id = ${id}`;
+    const sql = `UPDATE customer SET profile_picture_url = '${url}' WHERE customer_id = ${id}`;
     await pool.query(sql);
 
     return res.json({ message: "Customer image uploaded!", url });
   } catch (err) {
-    console.error("Error uploading inventory image:", err);
+    console.error("Error uploading customer profile image:", err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
