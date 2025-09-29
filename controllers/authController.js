@@ -58,11 +58,11 @@ export const register = async (req, res) => {
 
   //1. check if username exist
 
-  sql = `SELECT user_id FROM users
+    const sql = `SELECT user_id FROM users
         WHERE username = "${username}"`;
 
   const [existing] = await pool.query(sql);
-  if (existing) {
+  if (existing > 0) {
     return res
       .status(409)
       .json({ error: "username already taken. Please try again." });
