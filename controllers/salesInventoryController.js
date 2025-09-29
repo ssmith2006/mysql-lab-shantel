@@ -102,3 +102,13 @@ export const getSalesSummary = async (req, res) => {
 
   */
 };
+export const addSalesItems = async (req, res) => {
+  const sales_id = req.params.sales_id;
+  const { items } = req.body;
+ const sql = `INSERT INTO sales_inventory (product_id, sales_id, quantity) 
+               VALUES(${product_id}, ${sales_id}, ${quantity})`;
+  const results = await pool.query(sql);
+
+  res.json({ message: "Items sucessfully added to sale" });
+};
+

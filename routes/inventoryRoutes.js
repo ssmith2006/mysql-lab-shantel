@@ -25,14 +25,14 @@ const upload = multer({
 
 inventoryRouter.get("/inventory", getInventory);
 inventoryRouter.post("/inventory", createInventory);
-inventoryRouter.put("/inventory", editInventory);
-inventoryRouter.delete("/inventory", deleteInventory);
+inventoryRouter.put("/inventory/:id", editInventory);
+inventoryRouter.delete("/inventory/:id", deleteInventory);
 inventoryRouter.get("/inventory/value", getInventoryValue);
 inventoryRouter.get("/inventory/:id/history", getProductSalesHistory); //remember to import
 inventoryRouter.get("/inventory/top/units", getTop5ByUnit);
 inventoryRouter.get("/inventory/low-stock/:threshold", getLowStockProducts);
 inventoryRouter.post(
-  "/inventory/:id/upload-image",
+  "/inventory/:id/upload-picture",
   verifyToken,
   upload.single("image"),
   uploadInventoryImage
