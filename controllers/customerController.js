@@ -9,7 +9,7 @@ export const getCustomer = async (req, res) => {
 export const createCustomer = async (req, res) => {
   const id = req.params.id;
   const { name, phone, email } = req.body;
-  const sql = `INSERT INTO customer (id, name, phone, email) VALUES ("${id}", "${name}", "${phone}", "${email}")`;
+  const sql = `INSERT INTO customer (customer_id, name, phone, email) VALUES ("${id}", "${name}", "${phone}", "${email}")`;
   const result = await pool.query(sql);
   res.json({ message: "User created!" });
 };
@@ -20,7 +20,7 @@ export const editCustomer = async (req, res) => {
   const sql = `UPDATE customer 
                 SET name = "${name}",
                 phone = "${phone}",
-                email = "${email}",
+                email = "${email}"
                 WHERE customer_id = ${id}`;
 
   const result = await pool.query(sql);
@@ -30,7 +30,7 @@ export const editCustomer = async (req, res) => {
 export const deleteCustomer = async (req, res) => {
   const id = req.params.id;
   const sql = `DELETE FROM customer
-                WHERE id = ${id}`;
+                WHERE customer_id = ${id}`;
   const result = await pool.query(sql);
   res.json({ message: "User deleted!" });
 };
