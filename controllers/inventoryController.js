@@ -18,13 +18,13 @@ export const createInventory = async (req, res) => {
 };
 
 export const editInventory = async (req, res) => {
-  const id = req.params.id;
+  const product_id = req.params.id;
   const { name, price, stock } = req.body;
-  const sql = `UPDATE customer 
-               SET name = ${name}
-                phone = ${price}
-                email = ${stock}
-                WHERE product_id = ${id}`;
+  const sql = `UPDATE inventory
+               SET name = "${name}",
+               price = ${price},
+                stock = ${stock}
+                WHERE product_id = ${product_id}`;
 
   const result = await pool.query(sql);
   res.json({ message: "Product modified successfully!" });
@@ -73,7 +73,7 @@ export const getTop5ByUnit = async (req, res) => {
   LIMIT 5`;
 
   const [result] = await pool.query(sql);
-  console.log("Top 5 products result", result)
+  console.log("Top 5 products result", result);
   res.json(result);
 };
 
@@ -84,7 +84,7 @@ export const getLowStockProducts = async (req, res) => {
   WHERE stock < ${threshold}
   ORDER BY stock ASC`;
 
-  const result = await pool.query(sql);
+  const [result] = await pool.query(sql);
   res.json(result);
 };
 
@@ -94,11 +94,9 @@ export const uploadInventoryImage = async (req, res) => {
     const file = req.file;
 
     if (!file) {
-      return res
-        .status(400)
-        .json({
-          error: 'Please send an image file in form-data with key "image".',
-        });
+      return res.status(400).json({
+        error: 'Please send an image file in form-data with key "image".',
+      });
     }
 
     if (!file.mimetype.startsWith("image/")) {
@@ -122,7 +120,9 @@ export const uploadInventoryImage = async (req, res) => {
 
     const url = `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
 
-    const sql = `UPDATE inventory SET inventory_picture_url = '${url}' WHERE product_id = ${id}`;
+    const sql = `UPDATE inventory 
+                SET inventory_picture_url = '${url}' 
+                WHERE product_id = ${id}`;
     await pool.query(sql);
 
     return res.json({ message: "Inventory image uploaded!", url });
